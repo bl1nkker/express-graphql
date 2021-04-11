@@ -1,0 +1,68 @@
+# Here we define GrapghQL Schema
+type Event {
+    _id: ID!
+    title: String!
+    description: String!
+    price: Float!
+    date: String
+    creator: User!
+}
+
+
+input EventInput {
+    title: String!
+    description: String!
+    price: Float!
+    date: String!
+}
+
+type User {
+    _id: ID!
+    email: String!
+    password: String
+    createdEvents: [Event!]
+}
+
+input UserInput {
+    email: String!
+    password: String!
+}
+
+type AuthData {
+    userId: ID!
+    token: String!
+    tokenExpiration: Int!
+}
+
+type Booking{
+    _id: ID!
+    event: Event!
+    user: User!
+    # Built in (MongoDB) property
+    createdAt: String!
+    # Built in (MongoDB) property
+    updatedAt: String!
+}
+
+
+# RootQuery (custom name) is care about requests(queries). For example:
+# If we will send query to "events", we would receive list of strings
+type RootQuery {
+    events: [Event!]!
+    bookings: [Booking!]!
+    signInUser(email:String!, password:String!): AuthData!
+}
+
+# RootMutations (custom name) cares about mutations (PUT, PATCH, DELETE, etc.) 
+# If we will call "createEvent", we need to pass some params and then we will receive some string
+type RootMutations {
+    createEvent(eventInput: EventInput) : Event
+    signUpUser(userInput: UserInput): AuthData!
+    bookEvent(eventId: ID!): Booking!
+    unbookEvent(bookingId: ID!): Event!
+}
+
+schema {
+    query: RootQuery
+    mutation: RootMutations
+}
